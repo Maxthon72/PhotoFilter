@@ -1,0 +1,3 @@
+LIBRARY ASMdll
+EXPORTS GrayscaleASM
+EXPORTS NegativeASM

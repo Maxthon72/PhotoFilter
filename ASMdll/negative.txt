@@ -1,0 +1,69 @@
+.data
+max dword 255
+;													RCX			     RDX		  R8		R9
+; unsafe private static extern void GrayscaleAsm(byte* begining, byte* output, int hight, int Instride);
+.code
+NegativeASM proc
+        align 16
+
+        push rax
+        push r15
+
+        xor r15, r15
+        xor r11, r11
+        xor r14, r14 ;all pixels
+        mov r8,r8 ;hight
+        mov r9,r9 ;width
+
+        mov r10,24
+
+        mov rax, r9
+        mov r13, rdx
+        mov r14, r8
+        mul r14
+        mov r14, rax
+        xor rax, rax
+        mov rdx, r13
+
+        vbroadcastss xmm6,dword ptr [max] ;xmm6 = packed 255
+
+@@:     pmovzxbd xmm0,dword ptr [rcx+r15]
+        add r15, 4
+        movlps xmm0, [eax]
+        ;pmovzxbd xmm1,dword ptr [rcx+r15]	
+        ;add r15, 4
+        ;pmovzxbd xmm2,dword ptr [rcx+r15]	
+        ;add r15, 4
+
+        ;pmovzxbd xmm3,dword ptr [rcx+r15]
+        ;add r15, 4
+        ;pmovzxbd xmm4,dword ptr [rcx+r15]
+        ;add r15, 4
+        ;pmovzxbd xmm5,dword ptr [rcx+r15]
+        ;add r15, 4
+
+        vsubps xmm0,xmm6,xmm0
+        ;vsubps xmm1,xmm6,xmm1
+        ;vsubps xmm2,xmm6,xmm2
+        ;vsubps xmm3,xmm6,xmm3
+        ;vsubps xmm4,xmm6,xmm4
+        ;vsubps xmm5,xmm6,xmm5
+
+        ;vpackuswb xmm0,xmm1,xmm0
+        ;vpackuswb xmm2,xmm3,xmm2
+        ;vpackuswb xmm4,xmm5,xmm4
+
+        movaps [rdx + rax],xmm0
+        ;movaps [rdx + rax + 4],xmm2
+        ;movaps [rdx + rax + 8],xmm4
+
+        add rax, 4
+        sub r14, 4
+        jnz @B
+Done:   vzeroupper
+        pop rax
+        pop r15
+        ret
+
+NegativeASM endp
+end
